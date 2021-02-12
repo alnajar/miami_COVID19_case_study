@@ -11,11 +11,12 @@ library(lubridate)
 
 ######  Import Data  ##########################################################
 deathsbyday_df <- read_csv(
-	file = "data/FLDH_COVID19_deathsbyday_bycounty_20201120.csv"
+	file = "../../../data/deaths/FLDH_COVID19_deathsbyday_bycounty_20210207.csv"
 ) %>% 
 	# Deaths are behind. As of 11-20, 75% of daily-added FL deaths are on or after
 	#   10-03; see details in plot_deaths_20200914.R
-	filter(Date <= "2020-10-03") %>% 
+	# At revision and resubmission, we have deaths data until at least November 18
+	filter(Date <= "2020-11-19") %>% 
 	filter(County == "Dade") %>% 
 	select(-County)
 
@@ -98,8 +99,14 @@ hosp2dead_gg <-
 	ggplot(data = mdCOVID_df) +
 	
 	theme_bw() +
+	theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
 	theme(legend.position = "bottom") + 
 	aes(x = Date, y = Count, group = Type, colour = Type, shape = Type) +
+	scale_x_date(
+		date_breaks = "2 weeks",
+		date_minor_breaks = "1 week",
+		labels = scales::date_format("%d-%b")
+	) +
 	scale_color_manual(
 		values = c(
 			"Hospitalized" = "#ffc100",
@@ -114,13 +121,14 @@ hosp2dead_gg <-
 	) +
 	labs(
 		# title = "Overall Miami-Dade County Hospital COVID-19 Census",
-		x = paste(
-			"Date: ",
-			format(startEnd_date[1], "%d %B"),
-			"to",
-			format(startEnd_date[2], "%d %B"),
-			"2020"
-		),
+		# x = paste(
+		# 	"Date: ",
+		# 	format(startEnd_date[1], "%d %B"),
+		# 	"to",
+		# 	format(startEnd_date[2], "%d %B"),
+		# 	"2020"
+		# ),
+		x = "Date",
 		y = "Miami-Dade Counts (5-Day MA; Log2 Scale)"
 	) +
 	
@@ -128,7 +136,7 @@ hosp2dead_gg <-
 	geom_point(
 		data = tibble(
 			Date = as_date("2020-05-18"),
-			y = 5
+			y = 2.5
 		),
 		aes(x = Date, y = y),
 		inherit.aes = FALSE,
@@ -140,7 +148,7 @@ hosp2dead_gg
 
 ###  Save Hi-Res Plots  ###
 tiff(
-	"../figures/FIG02_hospitalizations_deaths_20201120.tiff",
+	"../figures/FIG02_hospitalizations_deaths_20210211.tiff",
 	units = "in", width = 7, height = 5,
 	res = 300
 )

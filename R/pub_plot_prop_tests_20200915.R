@@ -84,30 +84,44 @@ cases_gg <-
 	) +
 	labs(
 		# title = "Positive COVID-19 Test Results: Proportion out of All Tests",
-		caption = paste(
-			"Miami-Dade County,",
-			startEnd_date[1], "to", startEnd_date[2], "2020.",
-			"Red Triangle: Phase 1 Reopening"
-		),
+		# caption = paste(
+		# 	"Miami-Dade County,",
+		# 	startEnd_date[1], "to", startEnd_date[2], "2020.",
+		# 	"Red Triangle: Phase 1 Reopening"
+		# ),
+		caption = "Red Triangle: Phase 1 Reopening; Blue Square: Mask In Public Enforcement Begins",
 		y = "Proportion (%) of Positive Cases (5-Day MA)"
 	) +
 	
 	geom_point(aes(alpha = Total, colour = Total), size = 3) +
 	scale_color_gradient(
 		low = "#FFC30B", high = "#03AC13",
-		name = "Total Tests",
+		# name = "Total Tests",
 		breaks = c(7500, 15000),
 		guide = FALSE
 	) +
-	# scale_alpha_continuous() +
+	guides(alpha = guide_legend(title = "Total Tests")) + 
+	# scale_alpha_continuous() + 
 	
 	geom_point(
 		data = tibble(
-			Date = as_date("2020-05-18"),
+			# This is only because I'm rebuilding the figure in 2021, and lubridate
+			#   thinks that all the "Month-Day" dates are this year instead of in 2020
+			Date = as_date("2021-05-18"),
 			y = 0
 		),
 		aes(x = Date, y = y),
 		pch = 24, size = 2, fill = "red"
+	) + 
+	geom_point(
+		data = tibble(
+			# This is only because I'm rebuilding the figure in 2021, and lubridate
+			#   thinks that all the "Month-Day" dates are this year instead of in 2020
+			Date = as_date("2021-07-02"),
+			y = 0
+		),
+		aes(x = Date, y = y),
+		pch = 22, size = 2, fill = "blue"
 	)
 
 cases_gg
@@ -115,7 +129,7 @@ cases_gg
 
 ###  Save Hi-Res Plots  ###
 tiff(
-	"../figures/FIG01_proportion_positive_tests_20201120.tiff",
+	"../figures/FIG01_proportion_positive_tests_2020211.tiff",
 	units = "in", width = 7, height = 5,
 	res = 300
 )
